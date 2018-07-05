@@ -23,7 +23,7 @@ module riggerLayout {
 		/**
 		 * 当子对象为时是否释放
 		 */
-		doNotDestroy:boolean = false;
+		doNotDestroy: boolean = false;
 
 		/**
 		 * 距父容器左边距离
@@ -326,7 +326,8 @@ module riggerLayout {
 			}
 
 			// 延迟
-			Laya.timer.callLater(this, this.onChildRectangleChange);
+			this.onChildRectangleChange();
+			// Laya.timer.callLater(this, this.onChildRectangleChange);
 		}
 
 		/**
@@ -334,15 +335,16 @@ module riggerLayout {
 		 * @param item 
 		 */
 		remove(item: any): boolean {
-			if(!item) return false;
-			if(!this.elementsContent || this.numElements <= 0) return false;
-			// Laya.Sprite;// 可能放大多个不同的容器中
-			// LayoutItem<number>; // 可能放在多个不同的容器中,但可通过parent来移除
-			// Group; // 放在多个不同的容器中显然不合理
-			
-			// let ret:
-			
-			return this.doRemove(item);
+			if (!item) return false;
+			if (!this.elementsContent || this.numElements <= 0) return false;
+
+			let ret: boolean = this.doRemove(item);
+			if (this.numElements <= 0 && !this.doNotDestroy) {
+				if (this.parent) this.parent.remove(this);
+			}
+
+			return ret;
+
 		}
 
 		/**
@@ -391,6 +393,7 @@ module riggerLayout {
 			}
 
 			this.afterLayout(this.rectangle.x, this.rectangle.y, this.realWidth, this.realHeight);
+
 
 			//将矩形数据映射至真实显示对象
 			this.mapRectangle();
@@ -459,7 +462,7 @@ module riggerLayout {
 		}
 
 		dispose(): void {
-			if(this.mLayout) this.mLayout.dispose();
+			if (this.mLayout) this.mLayout.dispose();
 			// 析构所有设置规范
 			this.disposeLayoutSpec();
 			// 析构所有子对象
@@ -746,26 +749,36 @@ module riggerLayout {
 		}
 
 		protected applyRealPos(): void {
-			this.setPos(this.realX, this.realY);
+			this.setPos(Utils.isNullOrUndefined(this.realX) ? this.rectangle.x : this.realX, Utils.isNullOrUndefined(this.realY)?this.rectangle.y:this.realY);
 		}
 
 		doRemove(item: any): boolean {
 			let len: number = this.numElements;
 			let children: LayoutItem<any>[] = this.elementsContent;
 			let ret: boolean = false;
-			let temp: any;
+			let temp: LayoutItem<any>;
+			let newChildiren: LayoutItem<any>[] = [];
 
 			// 递归移除
 			for (var i: number = 0; i < len; ++i) {
-				temp = this.elementsContent[i];
-				if (temp instanceof Group) {
-					ret = temp.remove(item) ? true : ret;
+				temp = children[i];
+				if (temp.equal(item)) {
+					temp.dispose();
+					ret = true;
+				}
+				else {
+					// newChildiren.push(temp);
+					if (temp instanceof Group) {
+						if (temp.remove(item)) {
+							if (temp.numElements > 0 || temp.doNotDestroy) {
+								newChildiren.push(temp);
+							}
+							ret = true;
+						}
+					}
 				}
 			}
-
-			// 移除本层的
-			ret = ArrayUtil.remove<LayoutItem<any>>(this.elementsContent, (e, arr) => e.isSame(item)) >= 0 ? true : ret;
-
+			this.elementsContent = newChildiren;
 			return ret;
 		}
 
@@ -878,7 +891,7 @@ module riggerLayout {
 		/**
 		 * 析构适配规范设置
 		 */
-		private disposeLayoutSpec():void{
+		private disposeLayoutSpec(): void {
 			this.doDisposeLayoutSpec(this.top);
 			this.top = null;
 			this.doDisposeLayoutSpec(this.bottom);
@@ -893,28 +906,26 @@ module riggerLayout {
 			this.verticalCenter = null;
 		}
 
-		private disposeChildren():void{
-			let children:LayoutItem<any>[] = this.elementsContent;
-			if(!children) return;
-			let len:number = children.length;
-			for(var i:number = 0; i < len; ++i){
+		private disposeChildren(): void {
+			let children: LayoutItem<any>[] = this.elementsContent;
+			if (!children) return;
+			let len: number = children.length;
+			for (var i: number = 0; i < len; ++i) {
 				children[i].dispose();
 			}
 			this.elementsContent = null;
 		}
 
-		private doDisposeLayoutSpec(spec:LayoutSpec | LayoutSpec[]):void{
-			if(!spec) return;
-			if(spec instanceof LayoutSpec){
+		private doDisposeLayoutSpec(spec: LayoutSpec | LayoutSpec[]): void {
+			if (!spec) return;
+			if (spec instanceof LayoutSpec) {
 				spec.dispose();
 				return;
 			}
 
-			for(var i:number = 0; i < spec.length; ++i){
+			for (var i: number = 0; i < spec.length; ++i) {
 				spec[i].dispose();
 			}
-
-			return;
 
 		}
 	}
