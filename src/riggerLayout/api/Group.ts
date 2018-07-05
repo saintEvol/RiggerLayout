@@ -18,46 +18,107 @@
 */
 module riggerLayout {
 	export class Group extends LayoutItem<any>{
-		name: string;
+		name: string | number;
+
+		/**
+		 * 当子对象为时是否释放
+		 */
+		doNotDestroy:boolean = false;
+
 		/**
 		 * 距父容器左边距离
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		left: number | string;
+		public set left(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mLeft = this.adaptLayoutSpec(v);
+		}
+		public get left(): LayoutSpec | LayoutSpec[] | any {
+			return this.mLeft;
+		}
+		protected mLeft: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 距父级容器底部距离
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		bottom: number | string;
+		public set bottom(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mBottom = this.adaptLayoutSpec(v);
+		}
+		public get bottom(): LayoutSpec | LayoutSpec[] | any {
+			return this.mBottom;
+		}
+		mBottom: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 距父级容器右边的距离
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		right: number | string;
+		public set right(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mRight = this.adaptLayoutSpec(v);
+		}
+		public get right(): LayoutSpec | LayoutSpec[] | any {
+			return this.mRight;
+		}
+		mRight: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 距父级窗口顶部的距离
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		top: number | string;
-
-		/**
-		 * 高
-		 */
-		width: number | string;
+		public set top(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mTop = this.adaptLayoutSpec(v);
+		}
+		public get top(): LayoutSpec | LayoutSpec[] | any {
+			return this.mTop;
+		}
+		mTop: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 宽
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		height: number | string;
+		public set width(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mWidth = this.adaptLayoutSpec(v);
+		}
+		public get width(): LayoutSpec | LayoutSpec[] | any {
+			return this.mWidth;
+		}
+		mWidth: LayoutSpec | LayoutSpec[] | any;
+
+		/**
+		 * 高
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
+		 */
+		public set height(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mHeight = this.adaptLayoutSpec(v);
+		}
+		public get height(): LayoutSpec | LayoutSpec[] | any {
+			return this.mHeight
+		}
+		mHeight: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 在父级容器中距离X轴中心的位置
+		 * 格式:数字 -> 50, 字符串 -> "50%" | "50" | LayoutSpec | LayoutSpec[]
 		 */
-		horizontalCenter: number | string;
+		public set horizontalCenter(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mHorizontalCenter = this.adaptLayoutSpec(v);
+		}
+		public get horizontalCenter(): LayoutSpec | LayoutSpec[] | any {
+			return this.mHorizontalCenter;
+		}
+		mHorizontalCenter: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 在父级容器中距离Y轴中心的位置
 		 */
-		verticalCenter: number | string;
+		public set verticalCenter(v: LayoutSpec | LayoutSpec[] | any) {
+			this.mVerticalCenter = this.adaptLayoutSpec(v);
+		}
+		public get verticalCenter(): LayoutSpec | LayoutSpec[] | any {
+			return this.mVerticalCenter;
+		}
+		mVerticalCenter: LayoutSpec | LayoutSpec[] | any;
 
 		/**
 		 * 包含的子项
@@ -73,25 +134,22 @@ module riggerLayout {
 		}
 
 		/**
-		 * 外部显示设置的高度
+		 * 将不同格式的布局规范适配成统一格式
 		 */
-		explicitHeight: number;
+		public adaptLayoutSpec(v: number | string | LayoutSpec | LayoutSpec[]): LayoutSpec | LayoutSpec[] {
+			if (Utils.isString(v) || Utils.isNumber(v)) {
+				return LayoutSpec.create(null, null, v);
+			}
 
-		/**
-		 * 外部显示设置的宽度
-		 */
-		// explicitWidth: number;
-
-		/**
-		 * 指定此Group是否包含在父容器的布局中
-		 */
-		// includeInLayout: boolean;
+			return v;
+		}
 
 		/**
 		 * 此容器的布局对象
 		 */
 		protected mLayout: LayoutBase;
 		public get layout(): LayoutBase {
+			if (!this.mLayout) this.layout = new LayoutBase();
 			return this.mLayout;
 		}
 		public set layout(v: LayoutBase) {
@@ -100,36 +158,6 @@ module riggerLayout {
 			this.mLayout.target = this;
 			this.mLayout.measure();
 		}
-
-		/**
-		 * group 最大宽度，同时影响测试及自动布局的尺寸
-		 */
-		maxWidth: number | string;
-
-		/**
-		 * group 最大高度，同时影响测试及自动布局的尺寸
-		 */
-		maxHeight: number | string;
-
-		/**
-		 * group 最小宽度，同时影响测试及自动布局的尺寸,大于maxWidth时无效
-		 */
-		minWidth: number | string;
-
-		/**
-		 * group 最小高度，同时影响测试及自动布局的尺寸,大于maxHeight时无效
-		 */
-		minHeight: number | string;
-
-		/**
-		 * 相对父级容器高度的百分比
-		 */
-		// percentHeight: number;
-
-		/**
-		 * 相对父级容器宽度的百分比
-		 */
-		// percentWidth: number;
 
 		public get x() {
 			return this.rectangle.x;
@@ -170,11 +198,11 @@ module riggerLayout {
 		public setScale(x: number, y: number): void {
 			this.scaleChildren(x, y);
 			super.setScale(x, y);
-			
+
 		}
 
 		public setPos(x: number, y: number) {
-			this.offsetChildren(x - this.x, y - this.y);			
+			this.offsetChildren(x - this.x, y - this.y);
 			this.x = x;
 			this.y = y;
 		}
@@ -259,6 +287,20 @@ module riggerLayout {
 			return this.elementsContent[index];
 		}
 
+		/**
+		 * 通过名字获取元素
+		 * @param name 
+		 */
+		getElementByName(name: string | number): LayoutItem<any> {
+			let eles: LayoutItem<any>[] = this.elementsContent;
+			let len: number = eles.length;
+			for (var i: number = 0; i < len; ++i) {
+				if (name === eles[i].name) return eles[i];
+			}
+
+			return null;
+		}
+
 		protected measuredWidth: number = 0;
 		protected measuredHeight: number = 0;
 		/**
@@ -271,6 +313,10 @@ module riggerLayout {
 			this.measuredHeight = height;
 		}
 
+		/**
+		 * 将一个显示对象添加到布局组
+		 * @param item 
+		 */
 		addChild(item: any): void {
 			if (item instanceof LayoutItem) {
 				this.doAddChild(item);
@@ -281,9 +327,27 @@ module riggerLayout {
 
 			// 延迟
 			Laya.timer.callLater(this, this.onChildRectangleChange);
-			// this.onChildRectangleChange();
 		}
 
+		/**
+		 * 从所有子级中移除对象
+		 * @param item 
+		 */
+		remove(item: any): boolean {
+			if(!item) return false;
+			if(!this.elementsContent || this.numElements <= 0) return false;
+			// Laya.Sprite;// 可能放大多个不同的容器中
+			// LayoutItem<number>; // 可能放在多个不同的容器中,但可通过parent来移除
+			// Group; // 放在多个不同的容器中显然不合理
+			
+			// let ret:
+			
+			return this.doRemove(item);
+		}
+
+		/**
+		 * 布局组中有子对象的矩形区域发生了变化
+		 */
 		onChildRectangleChange(): void {
 			this.measure();
 			let oldRect: Rectangle = Rectangle.createInstance().copyFrom(this.rectangle);
@@ -295,16 +359,21 @@ module riggerLayout {
 			}
 		}
 
+		/**
+		 * 更新布局
+		 * @param needMeasure 
+		 */
 		updateLayout(needMeasure: boolean = true): void {
 			// 测量和个子元素当前矩形区域并合并生成Group的当前区域
 			needMeasure && this.measure();
-			this.updateDisplayList(this.rectangle.width / this.scaleX, this.rectangle.height / this.scaleY);
+			this.beforeLayout(this.rectangle.x, this.rectangle.y, this.rectangle.width / this.scaleX, this.rectangle.height / this.scaleY);
+
 			// 确定大小(根据当前父容器大小及本身当前矩形大小)
 			this.decideRealSize();
 			// 应用真实大小
 			this.applyRealSize();
 			// 缩放后，校正矩形区域
-			this.measure(false);			
+			this.measure(false);
 			// 确定位置
 			this.decideRealPos();
 			// 应用真实位置
@@ -321,7 +390,32 @@ module riggerLayout {
 				}
 			}
 
-			//将矩形映射至真实显示对象
+			this.afterLayout(this.rectangle.x, this.rectangle.y, this.realWidth, this.realHeight);
+
+			//将矩形数据映射至真实显示对象
+			this.mapRectangle();
+		}
+
+		/**
+		 * 
+		 */
+		updateChildrenLayout() {
+			let len: number = this.numElements;
+			// 更新子项（组）的适配与布局
+			let child: LayoutItem<any>;
+			for (var i: number = 0; i < len; ++i) {
+				child = this.getElementAt(i);
+				if (child instanceof Group) {
+					child.updateLayout(false);
+				}
+			}
+		}
+
+		/**
+		 * 更新子对象布局并使用生效
+		 */
+		updateAndApplyChildrenLayout() {
+			this.updateChildrenLayout();
 			this.mapRectangle();
 		}
 
@@ -333,19 +427,51 @@ module riggerLayout {
 			this.layout.measure(ifChild);
 		}
 
+
 		/**
 		 * 调整目标的元素的大小并定位这些元素
-		 * @param width 
-		 * @param height 
+		 * 
+		 * @param x 
+		 * @param y 
+		 * @param unscaledWidth 
+		 * @param unScaledHeight 
 		 */
-		updateDisplayList(unscaledWidth: number, unScaledHeight: number): void {
+		beforeLayout(x: number, y: number, unscaledWidth: number, unScaledHeight: number): void {
 			//基础布局是静态布局，不需要做任何操作，保持原位即可
-			if (this.layout) this.layout.updateDisplayList(unscaledWidth, unScaledHeight);
+			if (this.layout) this.layout.beforeLayout(x, y, unscaledWidth, unScaledHeight);
+		}
+
+		/**
+		 * 布局完成后再次调整布局
+		 * 
+		 * @param x 
+		 * @param y 
+		 * @param realWidth 
+		 * @param realHeight 
+		 */
+		afterLayout(x: number, y: number, realWidth: number, realHeight: number): void {
+			this.layout && this.layout.afterLayout(x, y, realWidth, realHeight);
 		}
 
 		constructor(item?: any) {
 			super(null);
 			if (item) this.addChild(item);
+		}
+
+		dispose(): void {
+			if(this.mLayout) this.mLayout.dispose();
+			// 析构所有设置规范
+			this.disposeLayoutSpec();
+			// 析构所有子对象
+			this.disposeChildren();
+			// 释放矩形
+			this.rectangle && this.rectangle.dispose();
+			this.rectangle = null;
+			// 释放布局类
+			this.mLayout && this.mLayout.dispose();
+			this.mLayout = null;
+			// 父对象析构
+			super.dispose();
 		}
 
 		/**
@@ -357,33 +483,56 @@ module riggerLayout {
 			for (var i: number = 0; i < len; ++i) {
 				this.getElementAt(i).mapRectangle();
 			}
-			this.draw();
+			// this.draw();
 		}
 
+		/**
+		 * 获取所在的适配层
+		 */
+		public getLayer(): LayoutLayer {
+			if (this instanceof LayoutLayer) return this;
+			if (!this.parent) return null;
+			if (this.parent instanceof LayoutLayer) {
+				return this.parent;
+			}
+			else {
+				return this.parent.getLayer();
+			}
+		}
+
+		/**
+		 * 偏移子对象
+		 * @param dx 
+		 * @param dy 
+		 */
 		protected offsetChildren(dx: number, dy: number): void {
 			let len: number = this.numElements;
 			let child: LayoutItem<any>;
 			for (var i: number = 0; i < len; ++i) {
 				child = this.getElementAt(i);
-				// child.rectangle.offset(dx, dy);
-				child.rectangle.offset(dx, dy);				
+				child.rectangle.offset(dx, dy);
 			}
 		}
 
+		/**
+		 * 缩放子对象
+		 * @param x 
+		 * @param y 
+		 */
 		protected scaleChildren(x: number, y: number) {
 			let len: number = this.numElements;
 			let child: LayoutItem<any>;
 			for (var i: number = 0; i < len; ++i) {
 				child = this.getElementAt(i);
 				if (child instanceof Group) {
-					break;
+					continue;
 				}
 
 				let oldX: number = (child.x - this.offsetX) / child.scaleX;
 				let oldY: number = (child.y - this.offsetY) / child.scaleY;
-				child.setScale(x, y);			
+				child.setScale(x, y);
 				child.setPos(oldX * x, oldY * y);
-				
+
 			}
 
 			// 更新自身矩形
@@ -391,10 +540,13 @@ module riggerLayout {
 
 		}
 
+		/**
+		 * 绘制矩形区域，用于DEBUG
+		 */
 		protected draw() {
 			this.graphic.alpha = 0.5;
 			this.graphic.graphics.clear();
-			console.log(`group ${this.name} draw,x:${this.rectangle.x}, y:${this.rectangle.y}, width:${this.rectangle.width}, height:${this.rectangle.height}`);
+			// console.log(`group ${this.name} draw,x:${this.rectangle.x}, y:${this.rectangle.y}, width:${this.rectangle.width}, height:${this.rectangle.height}`);
 			this.graphic.graphics.drawRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height, "blue");
 		}
 
@@ -418,7 +570,7 @@ module riggerLayout {
 		protected decideRealPos(): void {
 			if (this.parent) {
 				this.decideRealX();
-				this.decideRealY(); 
+				this.decideRealY();
 			}
 
 			// 再确定子级的
@@ -450,60 +602,116 @@ module riggerLayout {
 
 		protected decideRealXByRight(): boolean {
 			if (Utils.isNullOrUndefined(this.right)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.right);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.right, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
-			let r: number = t === ValueType.Percent ? this.parent.realWidth * v * 0.01 : v;
+			// if(v.isRelativeDesign()){
+			// 	// this.getLayer().designWidth - this.
+			// 	// 修正比例
+			// 	let pdw:number = this.getParentDesignWidth();
+			// 	let dw:number = this.getDesignWidth();
+			// 	this.rectangle.x;
+
+			// }
+			let r: number = v.calculateValue(this.parent.realWidth);
 
 			this.realX = this.parent.realWidth - this.realWidth - r + this.parent.realX;
 			return true;
 		}
 
+		protected getDesignWidth(): number {
+			return this.rectangle.width / this.mScaleX;
+		}
+
+		protected getDesignHeight(): number {
+			return this.rectangle.height / this.mScaleY;
+		}
+
+		protected getParentDesignWidth(): number {
+			if (!this.parent) return null;
+			if (this.parent instanceof LayoutLayer) {
+				return this.parent.designWidth;
+			}
+			return this.parent.rectangle.width / this.parent.mScaleX;
+		}
+
+		protected getParentDesignHeight(): number {
+			if (!this.parent) return null;
+			if (this.parent instanceof LayoutLayer) {
+				return this.parent.designHeight;
+			}
+			return this.parent.realHeight / this.parent.mScaleY;
+		}
+
 		protected decideRealXByLeft(): boolean {
 			if (Utils.isNullOrUndefined(this.left)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.left);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.left, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let x: number = t === ValueType.Percent ? this.parent.realWidth * v * 0.01 : v;
+			let x: number = v.calculateValue(this.parent.realWidth);
 			this.realX = this.parent.realX + x;
 			return true;
 		}
 
 		protected decideRealXByCenter(): boolean {
 			if (Utils.isNullOrUndefined(this.horizontalCenter)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.horizontalCenter);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.horizontalCenter, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let c: number = t === ValueType.Percent ? this.parent.realWidth * v * 0.01 : v;
+			let c: number = v.calculateValue(this.parent.realWidth);
 			this.realX = c + this.parent.realX + (this.parent.realWidth - this.realWidth) * 0.5;
 			return true;
 		}
 
 		protected decideRealYByTop(): boolean {
 			if (Utils.isNullOrUndefined(this.top)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.top);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.top, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let top: number = t === ValueType.Percent ? this.parent.realHeight * v * 0.01 : v;
+			let top: number = v.calculateValue(this.parent.realHeight);
 			this.realY = this.parent.realY + top;
 			return true;
 		}
 
 		protected decideRealYByBottom(): boolean {
 			if (Utils.isNullOrUndefined(this.bottom)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.bottom);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.bottom, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let bottom: number = t === ValueType.Percent ? this.parent.realHeight * v * 0.01 : v;
+			let bottom: number = v.calculateValue(this.parent.realHeight);
 			this.realY = this.parent.realHeight - this.realHeight - bottom + this.parent.realY;
 			return true;
 		}
 
 		protected decideRealYByCenter(): boolean {
 			if (Utils.isNullOrUndefined(this.verticalCenter)) return false;
-			let [t, v] = Utils.parseValueSpecs(this.verticalCenter);
+
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let v: LayoutValue = LayoutSpec.calculateRealValue(this.verticalCenter, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let c: number = t === ValueType.Percent ? this.realHeight * v * 0.01 : v;
+			let c: number = v.calculateValue(this.parent.realHeight);
 			this.realY = c + this.parent.realY + (this.parent.realHeight - this.realHeight) * 0.5;
 			return true;
 		}
@@ -512,18 +720,25 @@ module riggerLayout {
 		protected applyRealSize(): void {
 			let oldWidth: number = this.rectangle.width / this.mScaleX;
 			let oldHeight: number = this.rectangle.height / this.mScaleY;
-			
-			let scaleX: number; 
+
+			let scaleX: number;
 			let scaleY: number;
-			if(Utils.isNullOrUndefined(this.realWidth)) {
-				scaleX = scaleY = this.realHeight / oldHeight;	
+			// 如果宽，高都未设定，则不缩放
+			if (Utils.isNullOrUndefined(this.realWidth) && Utils.isNullOrUndefined(this.realHeight)) {
+				scaleX = this.mScaleX;
+				scaleY = this.mScaleY;
+			}
+			// 如果未设置有效宽，则与高一起等比缩放			
+			else if (Utils.isNullOrUndefined(this.realWidth)) {
+				scaleX = scaleY = this.realHeight / oldHeight;
 				this.realWidth = oldWidth * scaleX;
 			}
-			else if(Utils.isNullOrUndefined(this.realHeight)){
+			// 如果未设置有效高，则与宽一起做等比缩放
+			else if (Utils.isNullOrUndefined(this.realHeight)) {
 				scaleX = scaleY = this.realWidth / oldWidth;
 				this.realHeight = oldHeight * scaleY;
 			}
-			else{
+			else {
 				scaleX = this.realWidth / oldWidth;
 				scaleY = this.realHeight / oldHeight;
 			}
@@ -532,6 +747,26 @@ module riggerLayout {
 
 		protected applyRealPos(): void {
 			this.setPos(this.realX, this.realY);
+		}
+
+		doRemove(item: any): boolean {
+			let len: number = this.numElements;
+			let children: LayoutItem<any>[] = this.elementsContent;
+			let ret: boolean = false;
+			let temp: any;
+
+			// 递归移除
+			for (var i: number = 0; i < len; ++i) {
+				temp = this.elementsContent[i];
+				if (temp instanceof Group) {
+					ret = temp.remove(item) ? true : ret;
+				}
+			}
+
+			// 移除本层的
+			ret = ArrayUtil.remove<LayoutItem<any>>(this.elementsContent, (e, arr) => e.isSame(item)) >= 0 ? true : ret;
+
+			return ret;
 		}
 
 		private doAddChild(item: LayoutItem<any>): void {
@@ -560,13 +795,20 @@ module riggerLayout {
 				return;
 			}
 
-			let [widthType, widthValue] = Utils.parseValueSpecs(this.width);
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let widthValue: LayoutValue = LayoutSpec.calculateRealValue(this.width, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(widthValue)) {
-				this.realWidth = Utils.isNullOrUndefined(this.height) ? this.rectangle.width : null;				
+				this.realWidth = Utils.isNullOrUndefined(this.height) ? this.rectangle.width : null;
 				return;
 			}
-
-			this.realWidth = widthType === ValueType.Static ? widthValue : this.parent.realWidth * widthValue * 0.01
+			if (widthValue.isRelativeDesign()) {
+				let oldWidth: number = this.rectangle.width / this.mScaleX;
+			}
+			else {
+				this.realWidth = widthValue.calculateValue(this.parent.realWidth);
+			}
 		}
 
 		private decideRealHeight(): void {
@@ -576,51 +818,104 @@ module riggerLayout {
 
 			// 根据高的类型确定真实高
 			if (Utils.isNullOrUndefined(this.height)) {
-				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;																				
+				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;
 				return;
 			}
 
-			let [heightType, heightValue] = Utils.parseValueSpecs(this.height);
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+			let heightValue: LayoutValue = LayoutSpec.calculateRealValue(this.height, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(heightValue)) {
-				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;																
+				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;
 				return;
 			}
 
-			this.realHeight = heightType === ValueType.Static ? heightValue : this.parent.realHeight * heightValue * 0.01
+			this.realHeight = heightValue.calculateValue(this.parent.realHeight);
 		}
 
 		private decideHeightByTopAndBottom(): boolean {
 			if (Utils.isNullOrUndefined(this.top) || Utils.isNullOrUndefined(this.bottom)) return false;
 
-			let [topType, topValue] = Utils.parseValueSpecs(this.top);
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+			let topValue: LayoutValue = LayoutSpec.calculateRealValue(this.top, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(topValue)) return false;
 
-			let [bottomType, bottomValue] = Utils.parseValueSpecs(this.bottom);
+			let bottomValue: LayoutValue = LayoutSpec.calculateRealValue(this.bottom, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(bottomValue)) return false;
 
-			let realTop: number = topType === ValueType.Static ? topValue : this.parent.realHeight * topValue * 0.01;
-			let realBottom: number = bottomType === ValueType.Static ? bottomValue : this.parent.realHeight * bottomValue * 0.01;
+			let realTop: number = topValue.calculateValue(this.parent.realHeight);
+			let realBottom: number = bottomValue.calculateValue(this.parent.realHeight);
 
 			this.realHeight = this.parent.realHeight - realTop - realBottom;
 
 			return true;
 		}
 
+		/**
+		 * 根据左右边距确定宽：当同时规定了左右边距时，也意味着确定了宽
+		 */
 		private decideWidthByLeftAndRight(): boolean {
 			if (Utils.isNullOrUndefined(this.left) || Utils.isNullOrUndefined(this.right)) return false;
 
-			let [leftType, leftValue] = Utils.parseValueSpecs(this.left);
+			let parentWidth: number = this.parent.realWidth;
+			let parentHeight: number = this.parent.realHeight;
+
+			let leftValue: LayoutValue = LayoutSpec.calculateRealValue(this.left, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(leftValue)) return false;
 
-			let [rightType, rightValue] = Utils.parseValueSpecs(this.right);
+			let rightValue: LayoutValue = LayoutSpec.calculateRealValue(this.right, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(rightValue)) return false;
 
-			let realLeft: number = leftType === ValueType.Static ? leftValue : this.parent.realWidth * leftValue * 0.01;
-			let realRight: number = rightType === ValueType.Static ? rightValue : this.parent.realWidth * rightValue * 0.01;
+			let realLeft: number = leftValue.calculateValue(this.parent.realWidth);
+			let realRight: number = rightValue.calculateValue(this.parent.realWidth);
 
 			this.realWidth = this.parent.realWidth - realLeft - realRight;
 
 			return true;
+		}
+
+		/**
+		 * 析构适配规范设置
+		 */
+		private disposeLayoutSpec():void{
+			this.doDisposeLayoutSpec(this.top);
+			this.top = null;
+			this.doDisposeLayoutSpec(this.bottom);
+			this.bottom = null;
+			this.doDisposeLayoutSpec(this.left);
+			this.left = null;
+			this.doDisposeLayoutSpec(this.right);
+			this.right = null;
+			this.doDisposeLayoutSpec(this.horizontalCenter);
+			this.horizontalCenter = null;
+			this.doDisposeLayoutSpec(this.verticalCenter);
+			this.verticalCenter = null;
+		}
+
+		private disposeChildren():void{
+			let children:LayoutItem<any>[] = this.elementsContent;
+			if(!children) return;
+			let len:number = children.length;
+			for(var i:number = 0; i < len; ++i){
+				children[i].dispose();
+			}
+			this.elementsContent = null;
+		}
+
+		private doDisposeLayoutSpec(spec:LayoutSpec | LayoutSpec[]):void{
+			if(!spec) return;
+			if(spec instanceof LayoutSpec){
+				spec.dispose();
+				return;
+			}
+
+			for(var i:number = 0; i < spec.length; ++i){
+				spec[i].dispose();
+			}
+
+			return;
+
 		}
 	}
 }

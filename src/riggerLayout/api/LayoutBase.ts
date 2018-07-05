@@ -60,12 +60,27 @@ module riggerLayout {
 
 		/**
 		 * 调整目标的元素的大小并定位这些元素
-		 * @param width 
-		 * @param height 
+		 * 
+		 * @param x 
+		 * @param y 
+		 * @param unscaledWidth 
+		 * @param unScaledHeight 
 		 */
-		updateDisplayList(unscaledWidth: number, unScaledHeight: number): void {
+		beforeLayout(x:number, y:number, unscaledWidth: number, unScaledHeight: number): void {
 			//基础布局是静态布局，不需要做任何操作，保持原位即可
 			// throw new Error(ErrorStrings.NotImplemented);
+		}
+
+		/**
+		 * 布局完成后再次调整布局
+		 * 
+		 * @param x 
+		 * @param y 
+		 * @param realWidth 
+		 * @param realHeight 
+		 */
+		afterLayout(x:number, y:number, unscaledWidth: number, unScaledHeight: number):void{
+			// 默认不做处理
 		}
 
 
@@ -78,7 +93,7 @@ module riggerLayout {
 			let temp: Rectangle;
 			// let initRectangle: Rectangle = this.target.rectangle ? this.target.rectangle : Rectangle.createInstance();
 			let initRectangle: Rectangle = Rectangle.createInstance();
-			if (this.target.numElements > 0) {
+			if (len > 0) {
 				initRectangle.copyFrom(this.target.getElementAt(0).rectangle);
 			}
 			else {
@@ -91,10 +106,14 @@ module riggerLayout {
 			// 测量目标组中所有元素
 			for (var i: number = 0; i < len; ++i) {
 				item = this.target.getElementAt(i);
+
+				// 测量子对象				
 				if (ifChild) {
 					item.measure();
 				}
 
+				// 如果子对象不是组，则并入子对象的矩形区域
+				// 为什么不并入组的矩形，因为组的矩形大小，位置由其自己决定，而不必刚好被父对象包围
 				if (!(item instanceof Group)) {
 					temp = initRectangle.union(item.rectangle);
 					initRectangle.copyFrom(temp);

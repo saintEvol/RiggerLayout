@@ -11,6 +11,22 @@ module riggerLayout {
         }
 
         /**
+         * 判断参数是否是一个数字
+         * @param num 
+         */
+        public static isNumber(num):num is number{
+            return typeof num === "number";
+        }
+
+        /**
+         * 判断是否是函数
+         * @param fun 
+         */
+        public static isFunction(fun):fun is Function{
+            return typeof fun === "function";
+        }
+
+        /**
          * 检查是否为空或未定义
          */
         public static isNullOrUndefined(obj: any) {
@@ -24,31 +40,5 @@ module riggerLayout {
             return Utils.isNullOrUndefined(str) || str.length <= 0;
         }
 
-        /**
-         * 分析用户填写的值规范
-         * @param v 
-         */
-        public static parseValueSpecs(v: number | string): [ValueType, number] {
-            if (Utils.isNullOrUndefined(v)) return [null, null];
-            if (Utils.isString(v)) {
-                if (Utils.isNullOrEmpty(v)) return [null, null];
-                let idx: number = v.indexOf("%");
-                let type: ValueType;
-                if (idx >= 0) {
-                    type = ValueType.Percent;
-                }
-                else {
-                    type = ValueType.Static;
-                }
-
-                let num: number;                
-                num = parseFloat(v);
-                if (num === NaN) return [null, null];
-                return [type, num];
-            }
-            else {
-                return [ValueType.Static, v];
-            }
-        }
     }
 }

@@ -16,10 +16,10 @@ class GameMain{
 
         let label:Laya.Label = new Laya.Label("test Layout");
         let label1:Laya.Label = new Laya.Label("test Layout should be longer");        
-        label.pivotX = label.width;
+        // label.pivotX = label.width;
         label.color = "white";
         label1.color = "white";
-        label1.pivotX = label1.width;
+        // label1.pivotX = label1.width;
         label1.y = 17;
         Laya.stage.addChild(label);
         Laya.stage.addChild(label1);
@@ -32,7 +32,7 @@ class GameMain{
         subGroup.right = "0%";
         // subGroup.verticalCenter = 0;
         // 顶距
-        subGroup.bottom="-50%"
+        subGroup.top="110%"
         // 宽
         subGroup.width = "100%"
         // 高
@@ -46,21 +46,25 @@ class GameMain{
         mainGroup.addChild(label1);
         mainGroup.layout = new riggerLayout.LayoutBase();
         mainGroup.addChild(subGroup);  
-        mainGroup.right = "0%";
-        mainGroup.width = "50%"
+        mainGroup.right = riggerLayout.LayoutSpec.create(1, -1, 0);
+        mainGroup.left =  riggerLayout.LayoutSpec.create(0, 1, 0)
+        mainGroup.top = "50"
+        mainGroup.width = riggerLayout.LayoutSpec.create(-1, -1, "50%+10", 200);
+        // mainGroup.verticalCenter = "-20%";
+        // mainGroup.horizontalCenter = "0%";
         // mainGroup.height = "50%"
         
         this.layoutLayer.addChild(mainGroup);
         let contentArr:string[] = ["I have an orange, and will share with you.", "Sample is beauty.", "Wow, just change!", "Yes", "Great Good", "这是一个跨引擎的通用适配与自动布局框架"]
         label3.text = contentArr[5];
         let i:number = 0;
-        // Laya.timer.loop(1000, this, () => {
-        //     label3.text = contentArr[i];
-        //     ++i;
-        //     if(i >= contentArr.length) i = 0; 
-        //     Laya.timer.callLater(subGroup, subGroup.onChildRectangleChange);
-        //     // subGroup.onChildRectangleChange()
-        // })
+        Laya.timer.loop(1000, this, () => {
+            label3.text = contentArr[i];
+            ++i;
+            if(i >= contentArr.length) i = 0; 
+            Laya.timer.callLater(subGroup, subGroup.onChildRectangleChange);
+            subGroup.onChildRectangleChange()
+        })
 
     }
 }

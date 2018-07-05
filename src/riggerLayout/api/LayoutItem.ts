@@ -18,6 +18,10 @@
  */
 module riggerLayout {
 	export abstract class LayoutItem<T> {
+		// 测试用
+		public name: string | number;
+		public drawColor: string = "blue";
+
 		public rectangle: Rectangle;
 		public parent: Group;
 		protected item: T;
@@ -74,7 +78,7 @@ module riggerLayout {
 				this.mScaleY = v;
 			}
 
-			
+
 		}
 
 		// public offset(dx:number, dy:number):void{
@@ -83,11 +87,11 @@ module riggerLayout {
 		// 	this.offsetY = dy;
 		// }
 
-		public offsetX:number = 0;
+		public offsetX: number = 0;
 		// public get offsetX():number{
 		// 	return this.mOffsetX;
 		// }
-		public offsetY:number = 0;
+		public offsetY: number = 0;
 		// public get offsetY():number{
 		// 	return this.mOffsetY;
 		// }
@@ -142,19 +146,19 @@ module riggerLayout {
 
 		protected graphic: Laya.Sprite;
 		constructor(item: any) {
-			this.graphic = new Laya.Sprite();
+			// this.graphic = new Laya.Sprite();
 
-			if (Laya.stage) {
-				Laya.stage.addChildAt(this.graphic, 0);
+			// if (Laya.stage) {
+			// 	Laya.stage.addChildAt(this.graphic, 0);
 
-			}
+			// }
 			this.item = item;
-			this.mapItem();			
+			this.mapItem();
 			this.initInfos();
-			if (Laya.stage) {
-				this.draw();
+			// if (Laya.stage) {
+			// this.draw();
 
-			}
+			// }
 		}
 
 		dispose() {
@@ -163,10 +167,25 @@ module riggerLayout {
 			this.rectangle.dispose();
 		}
 
+		/**
+		 * 两个比较自己和目标是否相等
+		 * 如果目标是LayoutItem,则比较二者引用是否相同
+		 * 如果目标非LayoutITem或其子类，则将目标和this.item的引用相比较
+		 * @param item 
+		 */
+		equal(item: any): boolean {
+			if(item instanceof LayoutItem){
+				return this === item;
+			}
+			else{
+				return this.item === item;
+			}
+		}
+
 		protected draw(): void {
 			this.graphic.graphics.clear();
-			console.log(`draw item rect, x:${this.rectangle.x}, y:${this.rectangle.y}, width:${this.rectangle.width}, height:${this.rectangle.height}`);
-			this.graphic.graphics.drawRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height, "green");
+			// console.log(`draw item rect, x:${this.rectangle.x}, y:${this.rectangle.y}, width:${this.rectangle.width}, height:${this.rectangle.height}`);
+			this.graphic.graphics.drawRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height, this.drawColor);
 		}
 
 		public setX(x: number): void {
@@ -191,6 +210,14 @@ module riggerLayout {
 
 		public setScaleY(sy: number): void {
 			throw new Error(ErrorStrings.NotImplemented);
+		}
+
+		/**
+		 * 是否相同（本身或其持有的显示对象相同）
+		 * @param item 
+		 */
+		public isSame(item: any): boolean {
+			return item === this || this.item === item;
 		}
 
 		/**
@@ -244,7 +271,7 @@ module riggerLayout {
 			this.itemX = this.mapRectangleX();
 			this.itemY = this.mapRectangleY();
 
-			this.draw();
+			// this.draw();
 		}
 
 		/**

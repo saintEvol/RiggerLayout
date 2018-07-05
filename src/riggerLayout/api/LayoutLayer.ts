@@ -14,11 +14,70 @@
  *		limitations under the License.
  */
 /**
-* name 
+* name
 */
 module riggerLayout {
 	export class LayoutLayer extends Group {
 		protected topContainer: ITopContainer;
+		public get designWidth():number{
+			if(!this.topContainer) return null;
+			return this.topContainer.getDesignWidth();
+		}
+		public get designHeight():number{
+			if(!this.topContainer) return null;
+			return this.topContainer.getDesignHeight();
+		}
+
+		public relateTop(item:any):string{
+			if(item instanceof LayoutItem){
+				return `${item.itemY / this.designHeight * 100}%`;
+			}
+			else{
+				let temp:LayoutItem<any> = riggerLayout.GlobalSettings.realLayoutItemClass(item);
+				return this.relateTop(temp);
+			}	
+		}
+
+		public relateBottom(item:any):string{
+			if(item instanceof LayoutItem){
+				return `${(this.designHeight - item.itemHeight - item.itemY) / this.designHeight * 100}%`;
+			}
+			else{
+				let temp:LayoutItem<any> = riggerLayout.GlobalSettings.realLayoutItemClass(item);
+				return this.relateBottom(temp);
+			}	
+		}
+
+		public relateLeft(item:any):string{
+			if(item instanceof LayoutItem){
+				return `${(item.itemX) / this.designWidth * 100}%`;
+			}
+			else{
+				let temp:LayoutItem<any> = riggerLayout.GlobalSettings.realLayoutItemClass(item);
+				return this.relateLeft(temp);
+			}	
+		}
+
+		public relateRight(item:any):string{
+			if(item instanceof LayoutItem){
+				return `${(this.designWidth - item.itemX - item.itemWidth) / this.designWidth * 100}%`;
+			}
+			else{
+				let temp:LayoutItem<any> = riggerLayout.GlobalSettings.realLayoutItemClass(item);
+				return this.relateRight(temp);
+			}	
+		}
+
+		public relateHorizontalCenter(item:any):string{
+			if(item instanceof LayoutItem){
+				return `${(item.itemWidth / 2 + item.itemX - this.designWidth / 2) / this.designWidth * 100}%`;
+			}
+			else{
+				let temp:LayoutItem<any> = riggerLayout.GlobalSettings.realLayoutItemClass(item);
+				return this.relateHorizontalCenter(temp);
+			}	
+		}
+
 		constructor(container: ITopContainer) {
 			super();
 			this.topContainer = container;
@@ -60,7 +119,6 @@ module riggerLayout {
 			// console.log(`group ${this.name} draw,x:${this.rectangle.x}, y:${this.rectangle.y}, width:${this.rectangle.width}, height:${this.rectangle.height}`);
 			// this.graphic.graphics.drawRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height, "red");
 		}
-
 
 		protected onResize() {
 			this.updateLayout();

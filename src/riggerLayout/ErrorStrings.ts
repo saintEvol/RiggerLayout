@@ -22,6 +22,11 @@ module riggerLayout{
 		 * 未实现，表示某个接口未实现 
 		 */
 		static readonly NotImplemented:string = "Not_Implemented";
+
+		/**
+		 * 无效的布局规范
+		 */
+		static readonly InvalidLayoutSpec:string = "Invalid_Layout_Spec";
 		
 		constructor(){
 
