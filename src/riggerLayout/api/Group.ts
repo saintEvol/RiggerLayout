@@ -666,8 +666,8 @@ module riggerLayout {
 		protected decideRealXByCenter(): boolean {
 			if (Utils.isNullOrUndefined(this.horizontalCenter)) return false;
 
-			let parentWidth: number = this.getParentDesignWidth();
-			let parentHeight: number = this.getParentDesignHeight();
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.horizontalCenter, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
@@ -706,6 +706,7 @@ module riggerLayout {
 		}
 
 		protected decideRealYByCenter(): boolean {
+
 			if (Utils.isNullOrUndefined(this.verticalCenter)) return false;
 
 			let parentWidth: number = this.getParentRealWidth();
@@ -836,7 +837,7 @@ module riggerLayout {
 			}
 
 			let parentWidth: number = this.getParentRealWidth()
-			let parentHeight: number = this.getParentDesignHeight();
+			let parentHeight: number = this.getParentRealHeight();
 			let heightValue: LayoutValue = LayoutSpec.calculateRealValue(this.height, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(heightValue)) {
 				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;
