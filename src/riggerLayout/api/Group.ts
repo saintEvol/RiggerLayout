@@ -606,8 +606,8 @@ module riggerLayout {
 		protected decideRealXByRight(): boolean {
 			if (Utils.isNullOrUndefined(this.right)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.right, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
@@ -619,9 +619,9 @@ module riggerLayout {
 			// 	this.rectangle.x;
 
 			// }
-			let r: number = v.calculateValue(this.parent.realWidth);
+			let r: number = v.calculateValue(parentWidth);
 
-			this.realX = this.parent.realWidth - this.realWidth - r + this.parent.realX;
+			this.realX = parentWidth - this.realWidth - r + this.parent.realX;
 			return true;
 		}
 
@@ -646,19 +646,19 @@ module riggerLayout {
 			if (this.parent instanceof LayoutLayer) {
 				return this.parent.designHeight;
 			}
-			return this.parent.realHeight / this.parent.mScaleY;
+			return this.getParentRealHeight() / this.parent.mScaleY;
 		}
 
 		protected decideRealXByLeft(): boolean {
 			if (Utils.isNullOrUndefined(this.left)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.left, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let x: number = v.calculateValue(this.parent.realWidth);
+			let x: number = v.calculateValue(parentWidth);
 			this.realX = this.parent.realX + x;
 			return true;
 		}
@@ -666,27 +666,27 @@ module riggerLayout {
 		protected decideRealXByCenter(): boolean {
 			if (Utils.isNullOrUndefined(this.horizontalCenter)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentDesignWidth();
+			let parentHeight: number = this.getParentDesignHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.horizontalCenter, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let c: number = v.calculateValue(this.parent.realWidth);
-			this.realX = c + this.parent.realX + (this.parent.realWidth - this.realWidth) * 0.5;
+			let c: number = v.calculateValue(parentWidth);
+			this.realX = c + this.parent.realX + (parentWidth - this.realWidth) * 0.5;
 			return true;
 		}
 
 		protected decideRealYByTop(): boolean {
 			if (Utils.isNullOrUndefined(this.top)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.top, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let top: number = v.calculateValue(this.parent.realHeight);
+			let top: number = v.calculateValue(parentHeight);
 			this.realY = this.parent.realY + top;
 			return true;
 		}
@@ -694,28 +694,28 @@ module riggerLayout {
 		protected decideRealYByBottom(): boolean {
 			if (Utils.isNullOrUndefined(this.bottom)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.bottom, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let bottom: number = v.calculateValue(this.parent.realHeight);
-			this.realY = this.parent.realHeight - this.realHeight - bottom + this.parent.realY;
+			let bottom: number = v.calculateValue(parentHeight);
+			this.realY = parentHeight - this.realHeight - bottom + this.parent.realY;
 			return true;
 		}
 
 		protected decideRealYByCenter(): boolean {
 			if (Utils.isNullOrUndefined(this.verticalCenter)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let v: LayoutValue = LayoutSpec.calculateRealValue(this.verticalCenter, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(v)) return false;
 
-			let c: number = v.calculateValue(this.parent.realHeight);
-			this.realY = c + this.parent.realY + (this.parent.realHeight - this.realHeight) * 0.5;
+			let c: number = v.calculateValue(parentHeight);
+			this.realY = c + this.parent.realY + (parentHeight - this.realHeight) * 0.5;
 			return true;
 		}
 
@@ -749,7 +749,7 @@ module riggerLayout {
 		}
 
 		protected applyRealPos(): void {
-			this.setPos(Utils.isNullOrUndefined(this.realX) ? this.rectangle.x : this.realX, Utils.isNullOrUndefined(this.realY)?this.rectangle.y:this.realY);
+			this.setPos(Utils.isNullOrUndefined(this.realX) ? this.rectangle.x : this.realX, Utils.isNullOrUndefined(this.realY) ? this.rectangle.y : this.realY);
 		}
 
 		doRemove(item: any): boolean {
@@ -808,8 +808,8 @@ module riggerLayout {
 				return;
 			}
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let widthValue: LayoutValue = LayoutSpec.calculateRealValue(this.width, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(widthValue)) {
@@ -820,7 +820,7 @@ module riggerLayout {
 				let oldWidth: number = this.rectangle.width / this.mScaleX;
 			}
 			else {
-				this.realWidth = widthValue.calculateValue(this.parent.realWidth);
+				this.realWidth = widthValue.calculateValue(parentWidth);
 			}
 		}
 
@@ -835,32 +835,32 @@ module riggerLayout {
 				return;
 			}
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth()
+			let parentHeight: number = this.getParentDesignHeight();
 			let heightValue: LayoutValue = LayoutSpec.calculateRealValue(this.height, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(heightValue)) {
 				this.realHeight = Utils.isNullOrUndefined(this.width) ? this.rectangle.height : null;
 				return;
 			}
 
-			this.realHeight = heightValue.calculateValue(this.parent.realHeight);
+			this.realHeight = heightValue.calculateValue(parentHeight);
 		}
 
 		private decideHeightByTopAndBottom(): boolean {
 			if (Utils.isNullOrUndefined(this.top) || Utils.isNullOrUndefined(this.bottom)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 			let topValue: LayoutValue = LayoutSpec.calculateRealValue(this.top, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(topValue)) return false;
 
 			let bottomValue: LayoutValue = LayoutSpec.calculateRealValue(this.bottom, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(bottomValue)) return false;
 
-			let realTop: number = topValue.calculateValue(this.parent.realHeight);
-			let realBottom: number = bottomValue.calculateValue(this.parent.realHeight);
+			let realTop: number = topValue.calculateValue(parentHeight);
+			let realBottom: number = bottomValue.calculateValue(parentHeight);
 
-			this.realHeight = this.parent.realHeight - realTop - realBottom;
+			this.realHeight = parentHeight - realTop - realBottom;
 
 			return true;
 		}
@@ -871,8 +871,8 @@ module riggerLayout {
 		private decideWidthByLeftAndRight(): boolean {
 			if (Utils.isNullOrUndefined(this.left) || Utils.isNullOrUndefined(this.right)) return false;
 
-			let parentWidth: number = this.parent.realWidth;
-			let parentHeight: number = this.parent.realHeight;
+			let parentWidth: number = this.getParentRealWidth();
+			let parentHeight: number = this.getParentRealHeight();
 
 			let leftValue: LayoutValue = LayoutSpec.calculateRealValue(this.left, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(leftValue)) return false;
@@ -880,12 +880,20 @@ module riggerLayout {
 			let rightValue: LayoutValue = LayoutSpec.calculateRealValue(this.right, parentWidth, parentHeight);
 			if (Utils.isNullOrUndefined(rightValue)) return false;
 
-			let realLeft: number = leftValue.calculateValue(this.parent.realWidth);
-			let realRight: number = rightValue.calculateValue(this.parent.realWidth);
+			let realLeft: number = leftValue.calculateValue(parentWidth);
+			let realRight: number = rightValue.calculateValue(parentWidth);
 
-			this.realWidth = this.parent.realWidth - realLeft - realRight;
+			this.realWidth = parentWidth - realLeft - realRight;
 
 			return true;
+		}
+
+		private getParentRealWidth(): number {
+			return Utils.isNullOrUndefined(this.parent.realWidth) ? this.parent.rectangle.width : this.parent.realWidth;
+		}
+
+		private getParentRealHeight():number{
+			return Utils.isNullOrUndefined(this.parent.realHeight) ? this.parent.rectangle.height : this.parent.realHeight;
 		}
 
 		/**
